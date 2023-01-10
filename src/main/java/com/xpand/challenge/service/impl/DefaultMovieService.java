@@ -1,10 +1,6 @@
 package com.xpand.challenge.service.impl;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.xpand.challenge.dto.ActorSummary;
 import com.xpand.challenge.dto.IdentifiableMovieDTO;
 import com.xpand.challenge.dto.MovieDTO;
 import com.xpand.challenge.dto.MovieDTOMapper;
@@ -13,8 +9,12 @@ import com.xpand.challenge.model.Movie;
 import com.xpand.challenge.repository.MovieRepository;
 import com.xpand.challenge.service.MovieService;
 import com.xpand.challenge.validator.Validator;
-
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultMovieService implements MovieService {
@@ -49,16 +49,15 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
-    public List<String> getActoresFromMovie(Long id) {
-        List<String> actores = new ArrayList<>();
-
+    public List<ActorSummary> getActoresFromMovie(Long id) {
+        List<ActorSummary> actors = new ArrayList<>();
         Movie movie = movieRepository.findById(id).orElseThrow();
 
         for (Actor a : movie.getActors()) {
-            actores.add(a.getName());
+            ActorSummary actorSummary = new ActorSummary(a.getName(), a.getBirthdate(), a.getGender());
+            actors.add(actorSummary);
         }
-
-        return actores;
+        return actors;
     }
 
     @Override

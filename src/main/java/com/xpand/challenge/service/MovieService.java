@@ -3,9 +3,9 @@ package com.xpand.challenge.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.xpand.challenge.dto.ActorSummary;
 import com.xpand.challenge.dto.IdentifiableMovieDTO;
 import com.xpand.challenge.dto.MovieDTO;
-import com.xpand.challenge.model.Actor;
 
 public interface MovieService {
     
@@ -21,5 +21,5 @@ public interface MovieService {
 
     void deleteMovie(Long id);
 
-    List<String> getActoresFromMovie(Long id);
+    List<ActorSummary> getActoresFromMovie(Long id);
 }
