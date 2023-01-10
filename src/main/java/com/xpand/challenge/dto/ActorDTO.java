@@ -10,7 +10,6 @@ public class ActorDTO {
     private String name;
     private LocalDate birthdate;
     private Gender gender;
-
     private Movie movie;
 
 

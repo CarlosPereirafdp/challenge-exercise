@@ -31,3 +31,5 @@ INSERT INTO MOVIE (title, date, rank, revenue) VALUES ('Deep Water 2', '2022-03-
 
 INSERT INTO ACTOR (name, birthdate, gender, movie_id) VALUES ('Matt Hugs', '1980-02-01', 'male', 1);
 INSERT INTO ACTOR (name, birthdate, gender, movie_id) VALUES ('John Doe', '1983-04-11', 'male', 1);
+INSERT INTO ACTOR (name, birthdate, gender, movie_id) VALUES ('Carlos', '1983-10-11', 'male', 1);
+

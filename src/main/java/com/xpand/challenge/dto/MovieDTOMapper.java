@@ -1,8 +1,8 @@
 package com.xpand.challenge.dto;
 
-import java.util.Optional;
-
 import com.xpand.challenge.model.Movie;
+
+import java.util.Optional;
 
 public class MovieDTOMapper {
 

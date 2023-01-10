@@ -5,14 +5,36 @@ import com.xpand.challenge.model.Gender;
 import java.time.LocalDate;
 
 public class ActorSummary {
+
+    private Long id;
     private String name;
     private LocalDate birthdate;
     private Gender gender;
+    private String movie;
 
-    public ActorSummary(String name, LocalDate birthdate, Gender gender) {
+
+    public ActorSummary(Long id, String name, LocalDate birthdate, Gender gender, String movie) {
+        this.id = id;
         this.name = name;
         this.birthdate = birthdate;
         this.gender = gender;
+        this.movie = movie;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMovie() {
+        return movie;
+    }
+
+    public void setMovie(String movie) {
+        this.movie = movie;
     }
 
     public String getName() {

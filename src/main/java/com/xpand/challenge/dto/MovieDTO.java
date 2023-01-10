@@ -1,18 +1,23 @@
 package com.xpand.challenge.dto;
 
-import com.xpand.challenge.model.Actor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 public class MovieDTO {
 
+    private Long id;
     private String title;
     private LocalDate date;
     private Float rank;
     private BigDecimal revenue;
-    private List<Actor> actors;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

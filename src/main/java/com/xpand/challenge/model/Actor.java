@@ -1,7 +1,5 @@
 package com.xpand.challenge.model;
 
-import lombok.Getter;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 

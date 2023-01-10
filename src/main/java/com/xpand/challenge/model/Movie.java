@@ -1,10 +1,9 @@
 package com.xpand.challenge.model;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "movie")
@@ -27,7 +26,7 @@ public class Movie {
     @Column(name = "revenue")
     private BigDecimal revenue;
 
-    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Actor> actors;
 
     public List<Actor> getActors() {

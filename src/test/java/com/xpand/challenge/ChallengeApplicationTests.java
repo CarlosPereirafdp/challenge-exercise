@@ -3,12 +3,14 @@ package com.xpand.challenge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.xpand.challenge.dto.IdentifiableMovieDTO;
-import com.xpand.challenge.dto.MovieDTO;
+import com.xpand.challenge.dto.*;
 
+import com.xpand.challenge.model.Gender;
+import com.xpand.challenge.model.Movie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +53,7 @@ class ChallengeApplicationTests {
 
 	@Test
 	void doTestGetMovieByDate() {
-		ResponseEntity<List<IdentifiableMovieDTO>> response = restTemplate.exchange("http://localhost:"+port+"/movies?date=2019-09-03", HttpMethod.GET, null,
+		ResponseEntity<List<IdentifiableMovieDTO>> response = restTemplate.exchange("http://localhost:"+port+"/movies/date?date=2019-09-03", HttpMethod.GET, null,
 			new ParameterizedTypeReference<List<IdentifiableMovieDTO>>() {});
 		assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
 		assertTrue(response.getBody().size() > 0);
@@ -59,7 +61,7 @@ class ChallengeApplicationTests {
 
 	@Test
 	void doTestGetMovieByDateEmpty() {
-		ResponseEntity<List<IdentifiableMovieDTO>> response = restTemplate.exchange("http://localhost:"+port+"/movies?date=2025-09-03", HttpMethod.GET, null,
+		ResponseEntity<List<IdentifiableMovieDTO>> response = restTemplate.exchange("http://localhost:"+port+"/movies/date?date=2025-09-03", HttpMethod.GET, null,
 			new ParameterizedTypeReference<List<IdentifiableMovieDTO>>() {});
 		assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
 		assertTrue(response.getBody().size() == 0);
@@ -72,7 +74,7 @@ class ChallengeApplicationTests {
         dto.setRank(5f);
         dto.setDate(LocalDate.now());
 		HttpEntity<MovieDTO> putRequest = new HttpEntity<>(dto);
-		ResponseEntity<?> putResponse = restTemplate.exchange("http://localhost:"+port+"/movies/1", HttpMethod.PUT, putRequest, Void.class);
+		ResponseEntity<?> putResponse = restTemplate.exchange("http://localhost:"+port+"/movies/update/1", HttpMethod.PUT, putRequest, Void.class);
 		assertEquals(HttpStatus.NO_CONTENT.value(), putResponse.getStatusCode().value());
 		ResponseEntity<IdentifiableMovieDTO> getResponse = restTemplate.getForEntity("http://localhost:"+port+"/movies/1", IdentifiableMovieDTO.class);
 		assertEquals(HttpStatus.OK.value(), getResponse.getStatusCode().value());
@@ -86,14 +88,64 @@ class ChallengeApplicationTests {
         dto.setRank(15f);
         dto.setDate(LocalDate.now());
 		HttpEntity<MovieDTO> putRequest = new HttpEntity<>(dto);
-		ResponseEntity<?> putResponse = restTemplate.exchange("http://localhost:"+port+"/movies/1", HttpMethod.PUT, putRequest, Void.class);
+		ResponseEntity<?> putResponse = restTemplate.exchange("http://localhost:"+port+"/movies/update/1", HttpMethod.PUT, putRequest, Void.class);
 		assertEquals(HttpStatus.BAD_REQUEST.value(), putResponse.getStatusCode().value());
 	}
 
 	@Test
 	void doTestDeleteMovie() {
-		ResponseEntity<?> response = restTemplate.exchange("http://localhost:"+port+"/movies/1", HttpMethod.DELETE, null, Void.class);
+		ResponseEntity<?> response = restTemplate.exchange("http://localhost:"+port+"/movies/delete/2", HttpMethod.DELETE, null, Void.class);
 		assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode().value());
-		assertEquals(HttpStatus.NOT_FOUND.value(), restTemplate.getForEntity("http://localhost:"+port+"/movies/1", IdentifiableMovieDTO.class).getStatusCode().value());
+		assertEquals(HttpStatus.NOT_FOUND.value(), restTemplate.getForEntity("http://localhost:"+port+"/movies/2", IdentifiableMovieDTO.class).getStatusCode().value());
+	}
+
+	@Test
+	void doTestGetActores() {
+		assertEquals(HttpStatus.OK.value(), restTemplate.getForEntity("http://localhost:"+port+"/actors", List.class).getStatusCodeValue());
+	}
+
+	@Test
+	void doTestGetActor() {
+		ResponseEntity<ActorSummary> response = restTemplate.getForEntity("http://localhost:"+port+"/actors/id?id=1", ActorSummary.class);
+		assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
+		assertEquals(1, response.getBody().getId());
+	}
+
+	@Test
+	void doTestGetActorNotFound() {
+		ResponseEntity<ActorSummary> response = restTemplate.getForEntity("http://localhost:"+port+"/actors/id?id=125", ActorSummary.class);
+		assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode().value());
+	}
+
+	@Test
+	void doTestUpdateActor() {
+		ActorDTO dto = new ActorDTO();
+		dto.setName("Carlos Pereira");
+		dto.setBirthdate(LocalDate.now());
+		dto.setGender(Gender.MALE);
+		dto.setMovie(createMovie());
+		HttpEntity<ActorDTO> putRequest = new HttpEntity<>(dto);
+		ResponseEntity<?> putResponse = restTemplate.exchange("http://localhost:"+port+"/actors/update/1", HttpMethod.PUT, putRequest, Void.class);
+		assertEquals(HttpStatus.NO_CONTENT.value(), putResponse.getStatusCode().value());
+		ResponseEntity<ActorSummary> getResponse = restTemplate.getForEntity("http://localhost:"+port+"/actors/id?id=1", ActorSummary.class);
+		assertEquals(HttpStatus.OK.value(), getResponse.getStatusCode().value());
+		assertEquals("Carlos Pereira", getResponse.getBody().getName());
+	}
+
+	@Test
+	void doTestDeleteActor() {
+		ResponseEntity<?> response = restTemplate.exchange("http://localhost:"+port+"/actors/delete/2", HttpMethod.DELETE, null, Void.class);
+		assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode().value());
+		assertEquals(HttpStatus.NOT_FOUND.value(), restTemplate.getForEntity("http://localhost:"+port+"/actors/id?id=2", ActorSummary.class).getStatusCode().value());
+	}
+
+	public Movie createMovie(){
+		Movie movie = new Movie();
+		movie.setId(2L);
+		movie.setTitle("Teste movie");
+		movie.setDate(LocalDate.now());
+		movie.setRank(10f);
+		movie.setRevenue(BigDecimal.valueOf(10000));
+		return movie;
 	}
 }

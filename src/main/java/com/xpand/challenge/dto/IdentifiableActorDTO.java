@@ -1,6 +1,6 @@
 package com.xpand.challenge.dto;
 
-public class IdentifiableActorDTO extends ActorDTO{
+public class IdentifiableActorDTO extends ActorDTO {
 
     private Long id;
 

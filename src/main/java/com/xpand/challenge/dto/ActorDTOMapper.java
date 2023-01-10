@@ -5,7 +5,7 @@ import com.xpand.challenge.model.Actor;
 import java.util.Optional;
 
 public class ActorDTOMapper {
-    public static IdentifiableActorDTO toActorDTO(Actor actor){
+    public static IdentifiableActorDTO toActorDTO(Actor actor) {
         return Optional.ofNullable(actor).map(m -> {
             IdentifiableActorDTO dto = new IdentifiableActorDTO();
             dto.setId(actor.getId());
@@ -17,7 +17,7 @@ public class ActorDTOMapper {
         }).orElse(null);
     }
 
-    public static Actor fromActorDTO(ActorDTO dto){
+    public static Actor fromActorDTO(ActorDTO dto) {
         return Optional.ofNullable(dto).map(d -> {
             Actor actor = new Actor();
             actor.setName(d.getName());

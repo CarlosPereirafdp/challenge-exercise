@@ -4,12 +4,15 @@ import com.xpand.challenge.dto.ActorSummary;
 import com.xpand.challenge.dto.IdentifiableMovieDTO;
 import com.xpand.challenge.dto.MovieDTO;
 import com.xpand.challenge.dto.MovieDTOMapper;
+import com.xpand.challenge.exception.MovieServiceException;
 import com.xpand.challenge.model.Actor;
 import com.xpand.challenge.model.Movie;
 import com.xpand.challenge.repository.MovieRepository;
 import com.xpand.challenge.service.MovieService;
 import com.xpand.challenge.validator.Validator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public IdentifiableMovieDTO createMovie(MovieDTO movieDTO) {
         movieValidator.validate(movieDTO);
         Movie movie = MovieDTOMapper.fromMovieDTO(movieDTO);
@@ -38,7 +42,7 @@ public class DefaultMovieService implements MovieService {
     public IdentifiableMovieDTO getMovie(Long id) {
         return movieRepository.findById(id)
                 .map(MovieDTOMapper::toMovieDTO)
-                .orElseThrow();
+                .orElseThrow(MovieServiceException::movieNotFound);
     }
 
     @Override
@@ -51,10 +55,10 @@ public class DefaultMovieService implements MovieService {
     @Override
     public List<ActorSummary> getActoresFromMovie(Long id) {
         List<ActorSummary> actors = new ArrayList<>();
-        Movie movie = movieRepository.findById(id).orElseThrow();
+        Movie movie = movieRepository.findById(id).orElseThrow(MovieServiceException::movieNotFound);
 
         for (Actor a : movie.getActors()) {
-            ActorSummary actorSummary = new ActorSummary(a.getName(), a.getBirthdate(), a.getGender());
+            ActorSummary actorSummary = new ActorSummary(a.getId(), a.getName(), a.getBirthdate(), a.getGender(), movie.getTitle());
             actors.add(actorSummary);
         }
         return actors;
@@ -69,8 +73,9 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updateMovie(Long id, MovieDTO movieDTO) {
-        movieRepository.findById(id).orElseThrow();
+        movieRepository.findById(id).orElseThrow(MovieServiceException::movieNotFound);
         movieValidator.validate(movieDTO);
         Movie movie = MovieDTOMapper.fromMovieDTO(movieDTO);
         movie.setId(id);
@@ -78,6 +83,7 @@ public class DefaultMovieService implements MovieService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void deleteMovie(Long id) {
         movieRepository.deleteById(id);
     }
